@@ -9,13 +9,13 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class RentalService {
-  public Mono<ResponseEntity<Object>> rentABook(RentalRequestModel rentalRequestModel) {
-    ResponseEntity<Object> resp = ResponseHandler.responseBuilder("Rented a Book", HttpStatus.OK);
-    return Mono.just(resp);
+
+  public Mono<String> rentABook(RentalRequestModel rentalRequestModel) {
+    return Mono.just("Book Rented");
   }
 
-  public Mono<ResponseEntity<Object>> returnABook(RentalRequestModel rentalRequestModel) {
-    ResponseEntity<Object> resp = ResponseHandler.responseBuilder("Returned a Book", HttpStatus.CREATED);
-    return Mono.just(resp);
+  public Mono<String> returnABook(RentalRequestModel rentalRequestModel) {
+    return Mono.just("Book Returned");
+
   }
 }

@@ -1,3 +1,5 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://ep-mute-mud-a4qaff9r-pooler.us-east-1.aws.neon.tech/neondb?user=neondb_owner&password=npg_HIm3O1oqrTtG&sslmode=require
+  r2dbc:
+    url: r2dbc:postgresql://ep-mute-mud-a4qaff9r-pooler.us-east-1.aws.neon.tech/neondb&sslmode=require
+    username: neondb_owner
+    password: npg_HIm3O1oqrTtG
