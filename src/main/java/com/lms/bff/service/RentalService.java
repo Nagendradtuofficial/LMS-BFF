@@ -9,11 +9,13 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class RentalService {
+
   public Mono<String> rentABook(RentalRequestModel rentalRequestModel) {
     return Mono.just("Book Rented");
   }
 
   public Mono<String> returnABook(RentalRequestModel rentalRequestModel) {
     return Mono.just("Book Returned");
+
   }
 }

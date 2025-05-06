@@ -19,6 +19,7 @@ public class RentalController {
   public Mono<ResponseEntity<Object>> rentABook(
       @RequestBody RentalRequestModel rentalRequestModel
   ){
+
     return  rentalService.rentABook(rentalRequestModel).flatMap(ResponseHandler::finalResponse);
   }
 
@@ -26,7 +27,9 @@ public class RentalController {
   public Mono<ResponseEntity<Object>> returnABook(
       @RequestBody RentalRequestModel rentalRequestModel
   ){
+
     return  rentalService.returnABook(rentalRequestModel).flatMap(ResponseHandler::finalResponse);
+
   }
 
 
