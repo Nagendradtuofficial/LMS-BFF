@@ -3,6 +3,7 @@ spring:
     url: r2dbc:postgresql://ep-mute-mud-a4qaff9r-pooler.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
     username: neondb_owner
     password: npg_HIm3O1oqrTtG
+
   sql:
     init:
       mode: always
