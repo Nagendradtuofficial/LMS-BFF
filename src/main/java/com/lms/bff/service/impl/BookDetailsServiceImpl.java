@@ -3,46 +3,73 @@ package com.lms.bff.service.impl;
 import com.lms.bff.entity.BookEntity;
 import com.lms.bff.repository.BookDetailsRepo;
 import com.lms.bff.service.BookDetailsService;
-import com.lms.bff.utils.ResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class BookDetailsServiceImpl implements BookDetailsService {
+    private static final Logger logger = LoggerFactory.getLogger(BookDetailsServiceImpl.class);
+
+    @Autowired
+    BookDetailsRepo bookDetailsRepo;
 
     @Autowired
     public BookDetailsServiceImpl(BookDetailsRepo bookDetailsRepo) {
         this.bookDetailsRepo = bookDetailsRepo;
     }
 
-    @Autowired
-    BookDetailsRepo bookDetailsRepo;
-
-    public Mono<ResponseEntity<Object>> getAllBooks() {
-        Flux<BookEntity> responseBooksList = bookDetailsRepo.findAll();
-
-        ResponseEntity<Object> response = ResponseHandler.responseBuilder("All books fetched", HttpStatus.OK, responseBooksList);
-        return Mono.just(response);
+    public Flux<BookEntity> getAllBooks() {
+        return bookDetailsRepo.findAll()
+                .onErrorResume(error -> {
+                    logger.error("Error fetching all books: ", error);
+                    return Flux.empty();
+                });
     }
 
-    public Mono<ResponseEntity<Object>> addNewBook(BookEntity book) {
+    public Mono<String> addNewBook(BookEntity book) {
+
+        if (book.getTitle() == null || book.getTitle().trim().isEmpty()) {
+            return Mono.just("Title is required");
+        }
+        if (book.getDescription() == null || book.getDescription().trim().isEmpty()) {
+            return Mono.just("Description is required");
+        }
+        if (book.getQuantity() == null || book.getQuantity() < 0) {
+            return Mono.just("Valid quantity is required");
+        }
+
         Integer respId = book.getBookId();
 
-        bookDetailsRepo.save(book);
-        ResponseEntity<Object> response = ResponseHandler.responseBuilder("New Book Added", HttpStatus.OK);
-        return Mono.just(response);
+        if (respId == null) {
+            return bookDetailsRepo.save(book)
+                    .thenReturn("New Book Added")
+                    .onErrorResume(error -> {
+                        logger.error("Error adding new book: ", error);
+                        return Mono.just("Database Error: " + error.getMessage());
+                    });
+        } else {
+            return bookDetailsRepo.findById(respId)
+                    .flatMap(existingBook ->
+                            bookDetailsRepo.save(book)
+                                    .thenReturn("Existing Book's Data updated")
+                    )
+                    .switchIfEmpty(Mono.just("Book Id is invalid"))
+                    .onErrorResume(error -> {
+                        logger.error("Error updating book: ", error);
+                        return Mono.just("Database Error: " + error.getMessage());
+                    });
+        }
     }
 
-    public Mono<ResponseEntity<Object>> deleteBookById(Integer bookId) {
-        bookDetailsRepo.deleteById(bookId);
-        ResponseEntity<Object> response = ResponseHandler.responseBuilder("Book deleted successfully", HttpStatus.OK);
-        return Mono.just(response);
+    public Mono<String> deleteBookById(Integer bookId) {
+        return bookDetailsRepo.deleteById(bookId)
+                .thenReturn("Book deleted")
+                .onErrorResume(error -> {
+                    logger.error("Error deleting book: ", error);
+                    return Mono.just("Database Error: " + error.getMessage());
+                });
     }
 }
