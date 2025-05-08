@@ -26,7 +26,8 @@ public class RentalQueryController {
   }
 
   @GetMapping("/all-users")
-  public Mono<ResponseEntity<Object>> getAllUsers(){
+  public Mono<ResponseEntity<Object>> getAllUserRentals(){
+    //will display name and Books only for all users.
     return rentalQueryService.getAllUsers();
   }
 }
