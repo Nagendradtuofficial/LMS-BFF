@@ -1,7 +1,13 @@
 package com.lms.bff.entity;
 
-public class BookEntity {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
+@Table("books")
+public class BookEntity {
+    @Id
+    @Column("book_id")
     private Integer bookId;
     private String description;
     private String title;
@@ -15,11 +21,11 @@ public class BookEntity {
         this.bookId = bookId;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setdescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
